@@ -6,3 +6,9 @@ __pycache__/
 models/*.h5
 models/*.keras
 data/
+X_train.npy
+y_train.npy
+X_validation.npy
+y_validation.npy
+X_test.npy
+y_test.npy

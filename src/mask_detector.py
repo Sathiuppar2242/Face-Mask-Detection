@@ -1,5 +1,7 @@
 import cv2
 import numpy as np
+import winsound
+import time
 from tensorflow.keras.models import load_model
 
 
@@ -40,6 +42,15 @@ print("Press 'q' to quit.")
 
 
 # ==========================================
+# Sound alert settings
+# ==========================================
+
+last_alert_time = 0
+
+ALERT_COOLDOWN = 3
+
+
+# ==========================================
 # Real-time detection
 # ==========================================
 
@@ -65,7 +76,10 @@ while True:
     # Alert status for current frame
     no_mask_detected = False
 
+    # ======================================
     # Process every detected face
+    # ======================================
+
     for (x, y, w, h) in faces:
 
         # Extract face
@@ -137,7 +151,7 @@ while True:
         )
 
     # ======================================
-    # LIVE ALERT
+    # LIVE ALERT + SOUND
     # ======================================
 
     if no_mask_detected:
@@ -163,6 +177,20 @@ while True:
             (0, 0, 255),
             2
         )
+
+        # ==================================
+        # Sound alert with cooldown
+        # ==================================
+
+        current_time = time.time()
+
+        if current_time - last_alert_time >= ALERT_COOLDOWN:
+
+            print("ALERT: Face mask required!")
+
+            winsound.Beep(1000, 500)
+
+            last_alert_time = current_time
 
     else:
 

@@ -62,6 +62,9 @@ while True:
         minSize=(80, 80)
     )
 
+    # Alert status for current frame
+    no_mask_detected = False
+
     # Process every detected face
     for (x, y, w, h) in faces:
 
@@ -93,18 +96,17 @@ while True:
         if prediction >= 0.5:
 
             label = "With Mask"
-
             confidence = prediction * 100
-
             box_color = (0, 255, 0)
 
         else:
 
             label = "Without Mask"
-
             confidence = (1 - prediction) * 100
-
             box_color = (0, 0, 255)
+
+            # Activate alert
+            no_mask_detected = True
 
         # ==================================
         # Draw face rectangle
@@ -135,6 +137,46 @@ while True:
         )
 
     # ======================================
+    # LIVE ALERT
+    # ======================================
+
+    if no_mask_detected:
+
+        alert_text = "WARNING: MASK REQUIRED!"
+
+        cv2.putText(
+            frame,
+            alert_text,
+            (20, 80),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            1.0,
+            (0, 0, 255),
+            3
+        )
+
+        cv2.putText(
+            frame,
+            "Please wear a face mask",
+            (20, 120),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (0, 0, 255),
+            2
+        )
+
+    else:
+
+        cv2.putText(
+            frame,
+            "MASK STATUS: SAFE",
+            (20, 80),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.9,
+            (0, 255, 0),
+            2
+        )
+
+    # ======================================
     # Display face count
     # ======================================
 
@@ -153,7 +195,7 @@ while True:
     # ======================================
 
     cv2.imshow(
-        "Face Mask Detection",
+        "Face Mask Detection - Live Alert",
         frame
     )
 

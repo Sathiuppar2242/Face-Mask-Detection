@@ -1,4 +1,5 @@
 import numpy as np
+
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import (
     Conv2D,
@@ -7,7 +8,6 @@ from tensorflow.keras.layers import (
     Dense,
     Dropout
 )
-
 # Load preprocessed datasets
 X_train = np.load("X_train.npy")
 y_train = np.load("y_train.npy")
@@ -55,3 +55,21 @@ model.compile(
 
 # Display model architecture
 model.summary()
+
+# Train the CNN model
+print("\nStarting model training...")
+
+history = model.fit(
+    X_train,
+    y_train,
+    validation_data=(X_validation, y_validation),
+    epochs=10,
+    batch_size=32,
+    verbose=1
+)
+
+print("\nModel training completed!")
+# Save the trained model
+model.save("models/face_mask_detector.keras")
+
+print("Model saved successfully!")

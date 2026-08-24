@@ -15,27 +15,29 @@
     <style>
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6fa;
             color: #1f2937;
             min-height: 100vh;
         }
 
+        /* Header */
+
         .header {
             background: #111827;
             color: white;
-            padding: 22px;
+            padding: 24px 20px;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 30px;
+            font-size: 32px;
             margin-bottom: 8px;
         }
 
@@ -44,10 +46,18 @@
             font-size: 15px;
         }
 
+        /* Main */
+
         .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
+            width: 92%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
         }
 
         .card {
@@ -57,93 +67,232 @@
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
         }
 
-        .camera-title {
-            text-align: center;
+        /* Camera */
+
+        .camera-header {
             margin-bottom: 20px;
         }
 
-        .camera-title h2 {
+        .camera-header h2 {
             font-size: 24px;
-            margin-bottom: 8px;
+            margin-bottom: 7px;
         }
 
-        .camera-title p {
+        .camera-header p {
             color: #6b7280;
+            font-size: 14px;
         }
 
-        .camera-box {
-            width: 100%;
-            max-width: 900px;
-            margin: auto;
+        .camera-container {
             background: #111827;
             border-radius: 12px;
             overflow: hidden;
         }
 
-        .camera-box img {
-            display: block;
+        .camera-container img {
             width: 100%;
-            height: auto;
+            display: block;
         }
 
-        .status {
-            margin-top: 25px;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-
-        .status-card {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid #e5e7eb;
-        }
-
-        .status-card h3 {
-            font-size: 15px;
-            color: #6b7280;
-            margin-bottom: 8px;
-        }
-
-        .status-card p {
-            font-size: 20px;
+        .live-indicator {
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ecfdf5;
+            color: #047857;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: bold;
         }
 
-        .info {
-            margin-top: 25px;
-            padding: 18px;
-            background: #eff6ff;
-            border-radius: 10px;
-            text-align: center;
+        .live-dot {
+            width: 9px;
+            height: 9px;
+            background: #10b981;
+            border-radius: 50%;
         }
 
-        .info p {
-            color: #1e40af;
-            line-height: 1.6;
+        /* Detection */
+
+        .panel-title {
+            font-size: 21px;
+            margin-bottom: 20px;
         }
 
-        .footer {
+        .status-box {
+            border-radius: 14px;
+            padding: 25px 15px;
             text-align: center;
-            padding: 25px;
+            margin-bottom: 20px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            transition: 0.3s;
+        }
+
+        .status-icon {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .status-box h3 {
+            font-size: 22px;
+            margin-bottom: 7px;
+        }
+
+        .status-box p {
             color: #6b7280;
             font-size: 14px;
         }
 
-        @media (max-width: 700px) {
+        /* Status colors */
 
-            .header h1 {
-                font-size: 24px;
-            }
+        .mask-status {
+            background: #ecfdf5;
+            border-color: #10b981;
+        }
 
-            .status {
+        .mask-status h3 {
+            color: #047857;
+        }
+
+        .no-mask-status {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .no-mask-status h3 {
+            color: #dc2626;
+        }
+
+        .no-face-status {
+            background: #f9fafb;
+            border-color: #d1d5db;
+        }
+
+        /* Info cards */
+
+        .info-card {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .info-card span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .info-card strong {
+            font-size: 19px;
+        }
+
+        /* Features */
+
+        .project-info {
+            margin-top: 25px;
+        }
+
+        .project-info h2 {
+            margin-bottom: 18px;
+            font-size: 22px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .feature {
+            background: #f9fafb;
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        .feature .icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .feature h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .feature p {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        /* Instructions */
+
+        .instructions {
+            margin-top: 25px;
+            background: #eff6ff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #dbeafe;
+        }
+
+        .instructions h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .instructions p {
+            color: #1e40af;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        /* Footer */
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 900px) {
+
+            .dashboard {
                 grid-template-columns: 1fr;
             }
 
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .header h1 {
+                font-size: 25px;
+            }
+
             .container {
+                width: 95%;
                 margin: 20px auto;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
             }
 
         }
@@ -155,6 +304,8 @@
 
 <body>
 
+    <!-- Header -->
+
     <header class="header">
 
         <h1>
@@ -162,105 +313,420 @@
         </h1>
 
         <p>
-            Real-Time Computer Vision & Mask Detection System
+            Real-Time Computer Vision & Deep Learning System
         </p>
 
     </header>
 
 
+    <!-- Main -->
+
     <main class="container">
 
-        <section class="card">
+        <div class="dashboard">
 
-            <div class="camera-title">
 
-                <h2>
-                    Live Camera Detection
+            <!-- Camera -->
+
+            <section class="card">
+
+                <div class="camera-header">
+
+                    <h2>
+                        📷 Live Camera Detection
+                    </h2>
+
+                    <p>
+                        The AI model continuously analyzes
+                        the camera feed.
+                    </p>
+
+                </div>
+
+
+                <div class="camera-container">
+
+                    <img
+                        src="{{ url_for('video_feed') }}"
+                        alt="Live Face Mask Detection"
+                    >
+
+                </div>
+
+
+                <div class="live-indicator">
+
+                    <span class="live-dot"></span>
+
+                    CAMERA LIVE
+
+                </div>
+
+            </section>
+
+
+            <!-- Detection Panel -->
+
+            <section class="card">
+
+                <h2 class="panel-title">
+                    🔍 Detection Information
                 </h2>
 
-                <p>
-                    The AI model is analyzing the camera feed in real time.
-                </p>
 
-            </div>
-
-
-            <div class="camera-box">
-
-                <img
-                    src="{{ url_for('video_feed') }}"
-                    alt="Live Face Mask Detection"
+                <div
+                    id="statusBox"
+                    class="status-box no-face-status"
                 >
 
-            </div>
+                    <div
+                        id="statusIcon"
+                        class="status-icon"
+                    >
+                        👤
+                    </div>
 
 
-            <div class="status">
-
-                <div class="status-card">
-
-                    <h3>
-                        AI Model
+                    <h3 id="statusText">
+                        No Face Detected
                     </h3>
 
-                    <p>
-                        CNN
+
+                    <p id="statusMessage">
+                        Position your face inside
+                        the camera frame.
                     </p>
 
                 </div>
 
 
-                <div class="status-card">
+                <div class="info-card">
 
-                    <h3>
-                        Test Accuracy
-                    </h3>
+                    <span>
+                        Confidence
+                    </span>
 
-                    <p>
+                    <strong id="confidence">
+                        0%
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Faces Detected
+                    </span>
+
+                    <strong id="faces">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Model Accuracy
+                    </span>
+
+                    <strong>
                         96.30%
-                    </p>
+                    </strong>
 
                 </div>
 
 
-                <div class="status-card">
+                <div class="info-card">
+
+                    <span>
+                        Model Type
+                    </span>
+
+                    <strong>
+                        CNN
+                    </strong>
+
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- Features -->
+
+        <section class="card project-info">
+
+            <h2>
+                🚀 System Features
+            </h2>
+
+
+            <div class="feature-grid">
+
+                <div class="feature">
+
+                    <div class="icon">
+                        🤖
+                    </div>
 
                     <h3>
-                        Detection
+                        Deep Learning
                     </h3>
 
                     <p>
-                        Live
+                        CNN-based mask classification.
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="icon">
+                        👤
+                    </div>
+
+                    <h3>
+                        Face Detection
+                    </h3>
+
+                    <p>
+                        Real-time face localization.
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Confidence
+                    </h3>
+
+                    <p>
+                        Prediction confidence percentage.
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="icon">
+                        ⚡
+                    </div>
+
+                    <h3>
+                        Real-Time
+                    </h3>
+
+                    <p>
+                        Continuous webcam monitoring.
                     </p>
 
                 </div>
 
             </div>
 
+        </section>
 
-            <div class="info">
 
-                <p>
-                    Position your face in front of the camera.
-                    The system will automatically detect your face
-                    and classify whether you are wearing a mask.
-                </p>
+        <!-- Instructions -->
 
-            </div>
+        <section class="instructions">
+
+            <h2>
+                ℹ️ How It Works
+            </h2>
+
+            <p>
+                The webcam captures live video frames.
+                OpenCV detects faces using a Haar Cascade classifier.
+                Each detected face is processed by the trained
+                CNN model. The system then predicts whether the
+                person is wearing a mask and displays the result
+                with a confidence score.
+            </p>
 
         </section>
 
     </main>
 
 
+    <!-- Footer -->
+
     <footer class="footer">
 
         <p>
             Face Mask Detection System
-            | Python + TensorFlow + OpenCV + Flask
+            | Python • TensorFlow • OpenCV • Flask
+        </p>
+
+        <p>
+            Test Accuracy: 96.30%
         </p>
 
     </footer>
+
+
+    <!-- Live Detection JavaScript -->
+
+    <script>
+
+        function updateDetectionStatus() {
+
+            fetch("/detection_status")
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    const statusBox =
+                        document.getElementById(
+                            "statusBox"
+                        );
+
+                    const statusText =
+                        document.getElementById(
+                            "statusText"
+                        );
+
+                    const statusIcon =
+                        document.getElementById(
+                            "statusIcon"
+                        );
+
+                    const statusMessage =
+                        document.getElementById(
+                            "statusMessage"
+                        );
+
+                    const confidence =
+                        document.getElementById(
+                            "confidence"
+                        );
+
+                    const faces =
+                        document.getElementById(
+                            "faces"
+                        );
+
+
+                    // Update confidence
+
+                    confidence.textContent =
+                        data.confidence + "%";
+
+
+                    // Update face count
+
+                    faces.textContent =
+                        data.faces;
+
+
+                    // Reset status classes
+
+                    statusBox.className =
+                        "status-box";
+
+
+                    // With mask
+
+                    if (data.status === "With Mask") {
+
+                        statusBox.classList.add(
+                            "mask-status"
+                        );
+
+                        statusIcon.textContent =
+                            "😷";
+
+                        statusText.textContent =
+                            "WITH MASK";
+
+                        statusMessage.textContent =
+                            "Mask detected successfully.";
+
+                    }
+
+
+                    // Without mask
+
+                    else if (
+                        data.status === "Without Mask"
+                    ) {
+
+                        statusBox.classList.add(
+                            "no-mask-status"
+                        );
+
+                        statusIcon.textContent =
+                            "⚠️";
+
+                        statusText.textContent =
+                            "WITHOUT MASK";
+
+                        statusMessage.textContent =
+                            "Warning: Mask required.";
+
+                    }
+
+
+                    // No face
+
+                    else {
+
+                        statusBox.classList.add(
+                            "no-face-status"
+                        );
+
+                        statusIcon.textContent =
+                            "👤";
+
+                        statusText.textContent =
+                            "NO FACE DETECTED";
+
+                        statusMessage.textContent =
+                            "Position your face inside the camera frame.";
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.log(
+                        "Detection status error:",
+                        error
+                    );
+
+                });
+
+        }
+
+
+        // Update every 500 milliseconds
+
+        setInterval(
+            updateDetectionStatus,
+            500
+        );
+
+
+        // Initial update
+
+        updateDetectionStatus();
+
+    </script>
+
 
 </body>
 

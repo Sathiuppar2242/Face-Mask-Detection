@@ -146,8 +146,6 @@
             font-size: 14px;
         }
 
-        /* Status colors */
-
         .mask-status {
             background: #ecfdf5;
             border-color: #10b981;
@@ -232,84 +230,6 @@
             font-size: 12px;
         }
 
-        /* Detection History */
-
-        .history-section {
-            margin-top: 25px;
-        }
-
-        .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-        }
-
-        .history-header h2 {
-            font-size: 22px;
-        }
-
-        .history-badge {
-            background: #eff6ff;
-            color: #1d4ed8;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .history-table-container {
-            overflow-x: auto;
-        }
-
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .history-table th {
-            background: #f3f4f6;
-            padding: 12px;
-            text-align: left;
-            font-size: 13px;
-            color: #4b5563;
-        }
-
-        .history-table td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-            font-size: 13px;
-        }
-
-        .history-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .history-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .history-mask {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .history-no-mask {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .empty-history {
-            text-align: center;
-            padding: 25px;
-            color: #6b7280;
-            font-size: 14px;
-        }
-
         /* Instructions */
 
         .instructions {
@@ -331,6 +251,83 @@
             font-size: 14px;
         }
 
+        /* Detection History */
+
+        .history-section {
+            margin-top: 25px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .history-header h2 {
+            font-size: 22px;
+        }
+
+        .clear-button {
+            border: none;
+            background: #dc2626;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .clear-button:hover {
+            background: #b91c1c;
+        }
+
+        .history-table-wrapper {
+            overflow-x: auto;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        .history-table th {
+            background: #f9fafb;
+            color: #374151;
+        }
+
+        .history-status {
+            font-weight: bold;
+        }
+
+        .history-mask {
+            color: #047857;
+        }
+
+        .history-no-mask {
+            color: #dc2626;
+        }
+
+        .history-no-face {
+            color: #6b7280;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+        }
+
         /* Footer */
 
         .footer {
@@ -338,10 +335,6 @@
             padding: 30px 20px;
             color: #6b7280;
             font-size: 13px;
-        }
-
-        .footer p + p {
-            margin-top: 5px;
         }
 
         /* Responsive */
@@ -379,7 +372,6 @@
 
             .history-header {
                 align-items: flex-start;
-                gap: 10px;
                 flex-direction: column;
             }
 
@@ -391,6 +383,7 @@
 
 
 <body>
+
 
     <!-- Header -->
 
@@ -410,6 +403,7 @@
     <!-- Main -->
 
     <main class="container">
+
 
         <!-- Dashboard -->
 
@@ -557,6 +551,7 @@
 
             <div class="feature-grid">
 
+
                 <div class="feature">
 
                     <div class="icon">
@@ -636,20 +631,20 @@
             <div class="history-header">
 
                 <h2>
-                    📜 Detection History
+                    📋 Detection History
                 </h2>
 
-                <span
-                    id="historyCount"
-                    class="history-badge"
+                <button
+                    class="clear-button"
+                    onclick="clearDetectionHistory()"
                 >
-                    0 Records
-                </span>
+                    🗑️ Clear History
+                </button>
 
             </div>
 
 
-            <div class="history-table-container">
+            <div class="history-table-wrapper">
 
                 <table class="history-table">
 
@@ -686,7 +681,7 @@
                                 colspan="4"
                                 class="empty-history"
                             >
-                                No detection history available.
+                                Loading detection history...
                             </td>
 
                         </tr>
@@ -714,8 +709,7 @@
                 Each detected face is processed by the trained
                 CNN model. The system then predicts whether the
                 person is wearing a mask and displays the result
-                with a confidence score. Detection results are
-                also stored temporarily in the detection history.
+                with a confidence score.
             </p>
 
         </section>
@@ -743,8 +737,9 @@
 
     <script>
 
+
         // ==========================================
-        // Update live detection status
+        // Update detection status
         // ==========================================
 
         function updateDetectionStatus() {
@@ -786,25 +781,17 @@
                         );
 
 
-                    // Update confidence
-
                     confidence.textContent =
                         data.confidence + "%";
 
-
-                    // Update face count
 
                     faces.textContent =
                         data.faces;
 
 
-                    // Reset status classes
-
                     statusBox.className =
                         "status-box";
 
-
-                    // With mask
 
                     if (data.status === "With Mask") {
 
@@ -823,8 +810,6 @@
 
                     }
 
-
-                    // Without mask
 
                     else if (
                         data.status === "Without Mask"
@@ -845,8 +830,6 @@
 
                     }
 
-
-                    // No face
 
                     else {
 
@@ -880,10 +863,10 @@
 
 
         // ==========================================
-        // Update detection history
+        // Load detection history
         // ==========================================
 
-        function updateDetectionHistory() {
+        function loadDetectionHistory() {
 
             fetch("/detection_history")
 
@@ -896,21 +879,11 @@
                             "historyBody"
                         );
 
-                    const historyCount =
-                        document.getElementById(
-                            "historyCount"
-                        );
 
-
-                    // Update record count
-
-                    historyCount.textContent =
-                        data.length + " Records";
-
-
-                    // Show empty message
-
-                    if (data.length === 0) {
+                    if (
+                        !data ||
+                        data.length === 0
+                    ) {
 
                         historyBody.innerHTML = `
                             <tr>
@@ -928,53 +901,65 @@
                     }
 
 
-                    // Clear existing rows
-
                     historyBody.innerHTML = "";
 
 
-                    // Add detection records
+                    data.forEach(item => {
 
-                    data.forEach(record => {
+                        let statusClass =
+                            "history-no-face";
+
+
+                        if (
+                            item.status === "With Mask"
+                        ) {
+
+                            statusClass =
+                                "history-mask";
+
+                        }
+
+
+                        else if (
+                            item.status === "Without Mask"
+                        ) {
+
+                            statusClass =
+                                "history-no-mask";
+
+                        }
+
 
                         const row =
-                            document.createElement("tr");
-
-
-                        const statusClass =
-                            record.status === "With Mask"
-                                ? "history-mask"
-                                : "history-no-mask";
+                            document.createElement(
+                                "tr"
+                            );
 
 
                         row.innerHTML = `
-
                             <td>
-                                ${record.time}
+                                ${item.time}
+                            </td>
+
+                            <td
+                                class="history-status ${statusClass}"
+                            >
+                                ${item.status}
                             </td>
 
                             <td>
-
-                                <span
-                                    class="history-status ${statusClass}"
-                                >
-                                    ${record.status}
-                                </span>
-
+                                ${item.confidence}%
                             </td>
 
                             <td>
-                                ${record.confidence}%
+                                ${item.faces}
                             </td>
-
-                            <td>
-                                ${record.faces}
-                            </td>
-
                         `;
 
 
-                        historyBody.appendChild(row);
+                        historyBody.appendChild(
+                            row
+                        );
 
                     });
 
@@ -983,7 +968,44 @@
                 .catch(error => {
 
                     console.log(
-                        "Detection history error:",
+                        "History loading error:",
+                        error
+                    );
+
+                });
+
+        }
+
+
+        // ==========================================
+        // Clear detection history
+        // ==========================================
+
+        function clearDetectionHistory() {
+
+            fetch(
+                "/clear_history",
+                {
+                    method: "POST"
+                }
+            )
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    if (data.success) {
+
+                        loadDetectionHistory();
+
+                    }
+
+                })
+
+                .catch(error => {
+
+                    console.log(
+                        "Clear history error:",
                         error
                     );
 
@@ -1003,18 +1025,19 @@
 
 
         setInterval(
-            updateDetectionHistory,
-            1000
+            loadDetectionHistory,
+            2000
         );
 
 
         // ==========================================
-        // Initial updates
+        // Initial loading
         // ==========================================
 
         updateDetectionStatus();
 
-        updateDetectionHistory();
+        loadDetectionHistory();
+
 
     </script>
 

@@ -89,7 +89,6 @@ def add_detection_history(
     )
 
     if len(detection_history) > MAX_HISTORY:
-
         detection_history.pop()
 
 
@@ -108,20 +107,13 @@ def generate_frames():
         if not success:
             break
 
-        # ==================================
         # Convert to grayscale
-        # ==================================
-
         gray = cv2.cvtColor(
             frame,
             cv2.COLOR_BGR2GRAY
         )
 
-
-        # ==================================
         # Detect faces
-        # ==================================
-
         faces = face_cascade.detectMultiScale(
             gray,
             scaleFactor=1.1,
@@ -129,22 +121,24 @@ def generate_frames():
             minSize=(80, 80)
         )
 
-
-        # ==================================
         # Default status
-        # ==================================
-
         latest_detection = {
             "status": "No Face Detected",
             "confidence": 0,
             "faces": len(faces)
         }
 
+        # No face detected
+        if len(faces) == 0:
 
-        # ==================================
-        # Process detected faces
-        # ==================================
+            # Add no-face event occasionally
+            add_detection_history(
+                "No Face Detected",
+                0,
+                0
+            )
 
+        # Process every detected face
         for (x, y, w, h) in faces:
 
             # Extract face
@@ -153,13 +147,11 @@ def generate_frames():
                 x:x + w
             ]
 
-
-            # Resize face
+            # Resize
             face = cv2.resize(
                 face,
                 (128, 128)
             )
-
 
             # Convert BGR to RGB
             face = cv2.cvtColor(
@@ -167,12 +159,10 @@ def generate_frames():
                 cv2.COLOR_BGR2RGB
             )
 
-
-            # Normalize image
+            # Normalize
             face = face.astype(
                 "float32"
             ) / 255.0
-
 
             # Add batch dimension
             face = np.expand_dims(
@@ -180,21 +170,13 @@ def generate_frames():
                 axis=0
             )
 
-
-            # ==================================
             # AI prediction
-            # ==================================
-
             prediction = model.predict(
                 face,
                 verbose=0
             )[0][0]
 
-
-            # ==================================
             # Classification
-            # ==================================
-
             if prediction >= 0.5:
 
                 label = "With Mask"
@@ -213,11 +195,7 @@ def generate_frames():
 
                 color = (0, 0, 255)
 
-
-            # ==================================
             # Update latest detection
-            # ==================================
-
             latest_detection = {
                 "status": label,
                 "confidence": round(
@@ -227,22 +205,14 @@ def generate_frames():
                 "faces": len(faces)
             }
 
-
-            # ==================================
             # Add detection to history
-            # ==================================
-
             add_detection_history(
                 label,
                 confidence,
                 len(faces)
             )
 
-
-            # ==================================
             # Draw face rectangle
-            # ==================================
-
             cv2.rectangle(
                 frame,
                 (x, y),
@@ -251,11 +221,7 @@ def generate_frames():
                 3
             )
 
-
-            # ==================================
             # Display prediction
-            # ==================================
-
             text = (
                 f"{label}: "
                 f"{confidence:.1f}%"
@@ -271,11 +237,7 @@ def generate_frames():
                 2
             )
 
-
-        # ==================================
         # Encode frame
-        # ==================================
-
         ret, buffer = cv2.imencode(
             ".jpg",
             frame
@@ -284,14 +246,9 @@ def generate_frames():
         if not ret:
             continue
 
-
         frame_bytes = buffer.tobytes()
 
-
-        # ==================================
         # Send frame to browser
-        # ==================================
-
         yield (
             b"--frame\r\n"
             b"Content-Type: image/jpeg\r\n\r\n"
@@ -345,11 +302,26 @@ def detection_status():
 # ==========================================
 
 @app.route("/detection_history")
-def get_detection_history():
+def detection_history_api():
 
     return jsonify(
         detection_history
     )
+
+
+# ==========================================
+# Clear detection history
+# ==========================================
+
+@app.route("/clear_history", methods=["POST"])
+def clear_history():
+
+    detection_history.clear()
+
+    return jsonify({
+        "success": True,
+        "message": "Detection history cleared successfully."
+    })
 
 
 # ==========================================

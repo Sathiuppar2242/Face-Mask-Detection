@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 
-from flask import Flask, render_template, Response
+from datetime import datetime
+from flask import Flask, render_template, Response, jsonify
 from tensorflow.keras.models import load_model
 
 
@@ -43,10 +44,62 @@ camera = cv2.VideoCapture(0)
 
 
 # ==========================================
+# Latest detection information
+# ==========================================
+
+latest_detection = {
+    "status": "No Face Detected",
+    "confidence": 0,
+    "faces": 0
+}
+
+
+# ==========================================
+# Detection history
+# ==========================================
+
+detection_history = []
+
+MAX_HISTORY = 20
+
+
+# ==========================================
+# Add detection to history
+# ==========================================
+
+def add_detection_history(
+    status,
+    confidence,
+    faces
+):
+
+    detection = {
+        "time": datetime.now().strftime("%H:%M:%S"),
+        "status": status,
+        "confidence": round(
+            float(confidence),
+            1
+        ),
+        "faces": faces
+    }
+
+    detection_history.insert(
+        0,
+        detection
+    )
+
+    if len(detection_history) > MAX_HISTORY:
+
+        detection_history.pop()
+
+
+# ==========================================
 # Generate webcam frames
 # ==========================================
 
 def generate_frames():
+
+    global latest_detection
 
     while True:
 
@@ -69,6 +122,13 @@ def generate_frames():
             minSize=(80, 80)
         )
 
+        # Default status
+        latest_detection = {
+            "status": "No Face Detected",
+            "confidence": 0,
+            "faces": len(faces)
+        }
+
         # Process every detected face
         for (x, y, w, h) in faces:
 
@@ -84,7 +144,7 @@ def generate_frames():
                 (128, 128)
             )
 
-            # Convert BGR → RGB
+            # Convert BGR to RGB
             face = cv2.cvtColor(
                 face,
                 cv2.COLOR_BGR2RGB
@@ -107,10 +167,7 @@ def generate_frames():
                 verbose=0
             )[0][0]
 
-            # ==================================
             # Classification
-            # ==================================
-
             if prediction >= 0.5:
 
                 label = "With Mask"
@@ -123,14 +180,23 @@ def generate_frames():
 
                 label = "Without Mask"
 
-                confidence = (1 - prediction) * 100
+                confidence = (
+                    1 - prediction
+                ) * 100
 
                 color = (0, 0, 255)
 
-            # ==================================
-            # Draw face rectangle
-            # ==================================
+            # Update latest detection
+            latest_detection = {
+                "status": label,
+                "confidence": round(
+                    float(confidence),
+                    1
+                ),
+                "faces": len(faces)
+            }
 
+            # Draw face rectangle
             cv2.rectangle(
                 frame,
                 (x, y),
@@ -139,10 +205,7 @@ def generate_frames():
                 3
             )
 
-            # ==================================
             # Display prediction
-            # ==================================
-
             text = (
                 f"{label}: "
                 f"{confidence:.1f}%"
@@ -158,21 +221,18 @@ def generate_frames():
                 2
             )
 
-        # ==================================
         # Encode frame
-        # ==================================
-
         ret, buffer = cv2.imencode(
             ".jpg",
             frame
         )
 
+        if not ret:
+            continue
+
         frame_bytes = buffer.tobytes()
 
-        # ==================================
         # Send frame to browser
-        # ==================================
-
         yield (
             b"--frame\r\n"
             b"Content-Type: image/jpeg\r\n\r\n"
@@ -210,6 +270,18 @@ def video_feed():
 
 
 # ==========================================
+# Detection status API
+# ==========================================
+
+@app.route("/detection_status")
+def detection_status():
+
+    return jsonify(
+        latest_detection
+    )
+
+
+# ==========================================
 # Run application
 # ==========================================
 
@@ -226,5 +298,6 @@ if __name__ == "__main__":
     app.run(
         host="127.0.0.1",
         port=5000,
-        debug=False
+        debug=False,
+        threaded=True
     )

@@ -232,6 +232,84 @@
             font-size: 12px;
         }
 
+        /* Detection History */
+
+        .history-section {
+            margin-top: 25px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .history-header h2 {
+            font-size: 22px;
+        }
+
+        .history-badge {
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .history-table-container {
+            overflow-x: auto;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            background: #f3f4f6;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            color: #4b5563;
+        }
+
+        .history-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        .history-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .history-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .history-mask {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .history-no-mask {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
         /* Instructions */
 
         .instructions {
@@ -260,6 +338,10 @@
             padding: 30px 20px;
             color: #6b7280;
             font-size: 13px;
+        }
+
+        .footer p + p {
+            margin-top: 5px;
         }
 
         /* Responsive */
@@ -295,6 +377,12 @@
                 grid-template-columns: 1fr;
             }
 
+            .history-header {
+                align-items: flex-start;
+                gap: 10px;
+                flex-direction: column;
+            }
+
         }
 
     </style>
@@ -322,6 +410,8 @@
     <!-- Main -->
 
     <main class="container">
+
+        <!-- Dashboard -->
 
         <div class="dashboard">
 
@@ -539,6 +629,77 @@
         </section>
 
 
+        <!-- Detection History -->
+
+        <section class="card history-section">
+
+            <div class="history-header">
+
+                <h2>
+                    📜 Detection History
+                </h2>
+
+                <span
+                    id="historyCount"
+                    class="history-badge"
+                >
+                    0 Records
+                </span>
+
+            </div>
+
+
+            <div class="history-table-container">
+
+                <table class="history-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Time
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Confidence
+                            </th>
+
+                            <th>
+                                Faces
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="historyBody">
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="empty-history"
+                            >
+                                No detection history available.
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
         <!-- Instructions -->
 
         <section class="instructions">
@@ -553,7 +714,8 @@
                 Each detected face is processed by the trained
                 CNN model. The system then predicts whether the
                 person is wearing a mask and displays the result
-                with a confidence score.
+                with a confidence score. Detection results are
+                also stored temporarily in the detection history.
             </p>
 
         </section>
@@ -577,9 +739,13 @@
     </footer>
 
 
-    <!-- Live Detection JavaScript -->
+    <!-- JavaScript -->
 
     <script>
+
+        // ==========================================
+        // Update live detection status
+        // ==========================================
 
         function updateDetectionStatus() {
 
@@ -713,7 +879,122 @@
         }
 
 
-        // Update every 500 milliseconds
+        // ==========================================
+        // Update detection history
+        // ==========================================
+
+        function updateDetectionHistory() {
+
+            fetch("/detection_history")
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    const historyBody =
+                        document.getElementById(
+                            "historyBody"
+                        );
+
+                    const historyCount =
+                        document.getElementById(
+                            "historyCount"
+                        );
+
+
+                    // Update record count
+
+                    historyCount.textContent =
+                        data.length + " Records";
+
+
+                    // Show empty message
+
+                    if (data.length === 0) {
+
+                        historyBody.innerHTML = `
+                            <tr>
+                                <td
+                                    colspan="4"
+                                    class="empty-history"
+                                >
+                                    No detection history available.
+                                </td>
+                            </tr>
+                        `;
+
+                        return;
+
+                    }
+
+
+                    // Clear existing rows
+
+                    historyBody.innerHTML = "";
+
+
+                    // Add detection records
+
+                    data.forEach(record => {
+
+                        const row =
+                            document.createElement("tr");
+
+
+                        const statusClass =
+                            record.status === "With Mask"
+                                ? "history-mask"
+                                : "history-no-mask";
+
+
+                        row.innerHTML = `
+
+                            <td>
+                                ${record.time}
+                            </td>
+
+                            <td>
+
+                                <span
+                                    class="history-status ${statusClass}"
+                                >
+                                    ${record.status}
+                                </span>
+
+                            </td>
+
+                            <td>
+                                ${record.confidence}%
+                            </td>
+
+                            <td>
+                                ${record.faces}
+                            </td>
+
+                        `;
+
+
+                        historyBody.appendChild(row);
+
+                    });
+
+                })
+
+                .catch(error => {
+
+                    console.log(
+                        "Detection history error:",
+                        error
+                    );
+
+                });
+
+        }
+
+
+        // ==========================================
+        // Automatic updates
+        // ==========================================
 
         setInterval(
             updateDetectionStatus,
@@ -721,9 +1002,19 @@
         );
 
 
-        // Initial update
+        setInterval(
+            updateDetectionHistory,
+            1000
+        );
+
+
+        // ==========================================
+        // Initial updates
+        // ==========================================
 
         updateDetectionStatus();
+
+        updateDetectionHistory();
 
     </script>
 

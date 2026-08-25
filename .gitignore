@@ -44,3 +44,9 @@ dist/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Machine Learning Model
+models/*.keras
+
+# Training Dataset
+data/

@@ -1,14 +1,46 @@
+# Virtual Environment
 venv/
+
+# Python Cache
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
+
+# Environment Variables
 .env
-models/*.h5
-models/*.keras
-data/
-X_train.npy
-y_train.npy
-X_validation.npy
-y_validation.npy
-X_test.npy
-y_test.npy
+.env.*
+
+# Uploaded / Generated Files
+uploads/
+outputs/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary Files
+*.tmp
+*.temp
+
+# Large Dataset Files
+*.npy
+
+# Python Distribution
+build/
+dist/
+*.egg-info/
+
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/

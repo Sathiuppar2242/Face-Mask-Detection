@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Detection History | AI Face Mask Detection</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6fa;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        /* Header */
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        /* Main */
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 35px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Top section */
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .top-bar h2 {
+            font-size: 23px;
+        }
+
+        .top-bar p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .back-button {
+            text-decoration: none;
+            background: #111827;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #374151;
+        }
+
+        /* Statistics */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .stat-card span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .stat-card strong {
+            font-size: 24px;
+        }
+
+        /* Table */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #111827;
+            color: white;
+            padding: 13px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        /* Status */
+
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .with-mask {
+            background: #ecfdf5;
+            color: #047857;
+        }
+
+        .without-mask {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .no-face {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        /* Empty state */
+
+        .empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 700px) {
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                width: 95%;
+                margin: 20px auto;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            th,
+            td {
+                white-space: nowrap;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- Header -->
+
+    <header class="header">
+
+        <h1>
+            📊 Detection History
+        </h1>
+
+        <p>
+            AI Face Mask Detection Monitoring Records
+        </p>
+
+    </header>
+
+
+    <!-- Main -->
+
+    <main class="container">
+
+        <section class="card">
+
+            <!-- Top Bar -->
+
+            <div class="top-bar">
+
+                <div>
+
+                    <h2>
+                        Detection Records
+                    </h2>
+
+                    <p>
+                        Recent face mask detection results
+                    </p>
+
+                </div>
+
+                <a
+                    href="/"
+                    class="back-button"
+                >
+                    ← Back to Dashboard
+                </a>
+
+            </div>
+
+
+            <!-- Statistics -->
+
+            <div class="stats">
+
+                <div class="stat-card">
+
+                    <span>
+                        Total Records
+                    </span>
+
+                    <strong id="totalRecords">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        With Mask
+                    </span>
+
+                    <strong id="maskCount">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>
+                        Without Mask
+                    </span>
+
+                    <strong id="noMaskCount">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- Detection Table -->
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Time
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Confidence
+                            </th>
+
+                            <th>
+                                Faces
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="historyTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Empty State -->
+
+            <div
+                id="emptyState"
+                class="empty"
+                style="display: none;"
+            >
+
+                <div class="empty-icon">
+                    📭
+                </div>
+
+                <p>
+                    No detection history available.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+
+    <footer class="footer">
+
+        <p>
+            Face Mask Detection System
+            | Python • TensorFlow • OpenCV • Flask
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript -->
+
+    <script>
+
+        function loadHistory() {
+
+            fetch("/detection_history")
+
+                .then(response => response.json())
+
+                .then(data => {
+
+                    const table =
+                        document.getElementById(
+                            "historyTable"
+                        );
+
+                    const emptyState =
+                        document.getElementById(
+                            "emptyState"
+                        );
+
+                    const totalRecords =
+                        document.getElementById(
+                            "totalRecords"
+                        );
+
+                    const maskCount =
+                        document.getElementById(
+                            "maskCount"
+                        );
+
+                    const noMaskCount =
+                        document.getElementById(
+                            "noMaskCount"
+                        );
+
+
+                    table.innerHTML = "";
+
+
+                    if (
+                        !data.history ||
+                        data.history.length === 0
+                    ) {
+
+                        emptyState.style.display =
+                            "block";
+
+                        totalRecords.textContent =
+                            "0";
+
+                        maskCount.textContent =
+                            "0";
+
+                        noMaskCount.textContent =
+                            "0";
+
+                        return;
+
+                    }
+
+
+                    emptyState.style.display =
+                        "none";
+
+
+                    totalRecords.textContent =
+                        data.history.length;
+
+
+                    let masks = 0;
+
+                    let noMasks = 0;
+
+
+                    data.history.forEach(
+                        detection => {
+
+                            if (
+                                detection.status ===
+                                "With Mask"
+                            ) {
+
+                                masks++;
+
+                            }
+
+
+                            if (
+                                detection.status ===
+                                "Without Mask"
+                            ) {
+
+                                noMasks++;
+
+                            }
+
+
+                            const row =
+                                document.createElement(
+                                    "tr"
+                                );
+
+
+                            let statusClass =
+                                "no-face";
+
+
+                            if (
+                                detection.status ===
+                                "With Mask"
+                            ) {
+
+                                statusClass =
+                                    "with-mask";
+
+                            }
+
+
+                            else if (
+                                detection.status ===
+                                "Without Mask"
+                            ) {
+
+                                statusClass =
+                                    "without-mask";
+
+                            }
+
+
+                            row.innerHTML = `
+
+                                <td>
+                                    ${detection.time}
+                                </td>
+
+                                <td>
+
+                                    <span
+                                        class="status ${statusClass}"
+                                    >
+                                        ${detection.status}
+                                    </span>
+
+                                </td>
+
+                                <td>
+                                    ${detection.confidence}%
+                                </td>
+
+                                <td>
+                                    ${detection.faces}
+                                </td>
+
+                            `;
+
+
+                            table.appendChild(row);
+
+                        }
+                    );
+
+
+                    maskCount.textContent =
+                        masks;
+
+
+                    noMaskCount.textContent =
+                        noMasks;
+
+                })
+
+                .catch(error => {
+
+                    console.error(
+                        "History loading error:",
+                        error
+                    );
+
+                });
+
+        }
+
+
+        // Load history immediately
+
+        loadHistory();
+
+
+        // Refresh every 2 seconds
+
+        setInterval(
+            loadHistory,
+            2000
+        );
+
+    </script>
+
+
+</body>
+
+</html>
